@@ -1,33 +1,50 @@
+import {
+    CREATE_JOB_SUCCESS,
+    READ_JOBS_SUCCESS,
+    UPDATE_JOB_SUCCESS,
+    DELETE_JOB_SUCCESS,
+} from './action'
+
 
 const initState = {
-    dataSearch: '',
-    data: [],
-    job: ''
+    data: {
+        username: '',
+        todos: [],
+        id: ''
+    },
 };
 
 
 const todoReducer = (state = initState, action) => {
     switch (action.type) {
-        case 'SET_SEARCH':
+        case CREATE_JOB_SUCCESS:
             return {
                 ...state,
-                dataSearch: action.payload
+                data: {
+                    ...state.data,
+                    todos: [...state.data.todos, action.payload],
+                },
             };
-        case 'SET_JOB':
+        case UPDATE_JOB_SUCCESS:
             return {
                 ...state,
-                job: action.payload
+                data: action.payload,
             };
-        case 'SET_DATA':
+        case DELETE_JOB_SUCCESS:
+            // Lọc ra các công việc khác công việc được xóa
+            const updatedJobs = state.data.todos.filter(job => job.id !== action.payload);
+            return {
+                ...state,
+                data: {
+                    ...state.data,
+                    todos: updatedJobs,
+                },
+            };
+        case READ_JOBS_SUCCESS:
             return {
                 ...state,
                 data: action.payload
             };
-        case 'ADD_JOB':
-            return {
-                ...state,
-                data: [...state.data, action.payload]
-            }
         default:
             return state;
     }

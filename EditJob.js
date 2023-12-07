@@ -2,30 +2,29 @@ import { StyleSheet, Text, View, Image, TextInput, Pressable } from 'react-nativ
 import { useState } from 'react';
 
 import { connect } from 'react-redux';
-import { createJob, readJobs } from './redux/action'
+import { readJobs, updateJob } from './redux/action'
 
 
 
 
 
-function AddJob({ dispatch, data }) {
+function EditJob({ dispatch, data, route }) {
 
 
     const [job, setJob] = useState('');
 
 
-    const handleAddNewJob = (job, data) => {
-        dispatch(createJob(job, data));
+
+    const handleEditJob = (jobID, job, data) => {
+        dispatch(updateJob(jobID, job, data));
         setJob('');
         dispatch(readJobs());
-        console.log('Thêm thành công!');
     };
-
 
 
     return (
         <View style={styles.container}>
-            <Text style={{ width: 258, height: 48, marginTop: 30, fontFamily: 'Epilogue', fontWeight: 700, fontSize: 32, lineHeight: 48, textAlign: 'center' }}>Add new job</Text>
+            <Text style={{ width: 258, height: 48, marginTop: 30, fontFamily: 'Epilogue', fontWeight: 700, fontSize: 32, lineHeight: 48, textAlign: 'center' }}>Edit job</Text>
             <View style={{ flexDirection: 'row', width: 334, height: 44, marginTop: 50, alignItems: 'center', borderWidth: 1, borderRadius: 4, borderColor: '#9095A0' }}>
                 <View style={{ width: '15%', height: 30, justifyContent: 'center', alignItems: 'center' }}>
                     <Image
@@ -35,16 +34,16 @@ function AddJob({ dispatch, data }) {
                 </View>
                 <TextInput
                     style={{ width: '85%', height: '100%' }}
-                    placeholder={'input your job'}
+                    placeholder={route.params?.jobId ? route.params.name : 'job to edit'}
                     onChangeText={text => setJob(text)}
                 />
             </View>
             <Pressable
                 style={{ width: 190, height: 44, borderWidth: 1, borderRadius: 12, backgroundColor: '#00BDD6', alignItems: 'center', justifyContent: 'center', marginTop: 80 }}
-                onPress={() => handleAddNewJob(job, data)}
+                onPress={() => handleEditJob(route.params.jobId, job, data)}
             >
                 <Text style={{ width: 82, height: 26, fontFamily: 'Inter', fontWeight: 400, fontSize: 16, lineHeight: 26, color: '#FFFFFF', textAlign: 'center' }}>
-                    FINISH</Text>
+                    EDIT</Text>
             </Pressable>
             <View style={{ width: 320, height: 200, justifyContent: 'center', alignItems: 'center', marginTop: 90 }}>
                 <Image source={require('./assets/Image 95.png')}
@@ -64,5 +63,6 @@ const styles = StyleSheet.create({
 });
 const mapStateToProps = (state) => ({
     data: state.data,
+
 });
-export default connect(mapStateToProps)(AddJob);
+export default connect(mapStateToProps)(EditJob);

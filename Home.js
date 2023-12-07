@@ -1,43 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Image, TextInput, FlatList, Pressable } from 'react-native';
+import { StyleSheet, Text, View, Image, TextInput, FlatList, Pressable, TouchableOpacity } from 'react-native';
 
 import { connect } from 'react-redux';
-import { setSearch, setData } from './redux/action'
+import { deleteJob, readJobs } from './redux/action'
 
-function Home({ navigation, dispatch, dataSearch, data }) {
+function Home({ navigation, dispatch, data }) {
 
-    // api
-    const getToDoJobFromApi = async () => {
-        try {
-            console.log("Calling API...");
-            const response = await fetch('https://pwqz9y-8080.csb.app/ToDo/1');
-    
-            if (!response.ok) {
-                throw new Error('Failed to fetch data');
-            }
-    
-            const data = await response.json();
-            console.log("API Response:", data);
-            dispatch(setData(data));
-        } catch (error) {
-            console.error('Error fetching data:', error.message);
-        }
-    }
-    
     useEffect(() => {
-        getToDoJobFromApi();
-    }, []);
+        dispatch(readJobs());
+        console.log("Data in Home:", data);
+    }, [dispatch]);
 
+    const handleDeleteJob = (jobId, data) => {
+        dispatch(deleteJob(jobId, data));
+    };
 
     // Render Item của flatlist
     const renderItem = ({ item }) => (
         <View key={item.id} style={{ width: 355, height: 40, borderWidth: 1, borderRadius: 24, backgroundColor: '#D3D5D8', top: 20, flexDirection: 'row', justifyContent: 'center', marginTop: item.id == 1 ? 0 : 20 }}>
-            <View style={{ width: 50, height: 30, justifyContent: 'center', alignItems: 'center' }}>
+            <Pressable
+                style={{ width: 50, height: 30, justifyContent: 'center', alignItems: 'center' }}
+                onPress={() => {
+                    handleDeleteJob(item.id, data)
+                }}
+            >
                 <Image
                     source={require('./assets/Frame3.png')}
                     style={{ width: 24, height: 24 }}
                 />
-            </View>
+            </Pressable>
             <Text
                 style={{ width: 230, height: 26, fontFamily: 'Inter', fontWeight: 400, fontSize: 16, lineHeight: 26 }}
             > {item.name}</Text>
@@ -50,6 +41,16 @@ function Home({ navigation, dispatch, dataSearch, data }) {
 
                 />
             </Pressable>
+            <TouchableOpacity
+                style={{ width: 50, height: '100%', justifyContent: 'center', alignItems: 'center' }}
+                onPress={() => {
+                    navigation.navigate('EditJob', { jobId: item.id });
+                }}
+            >
+                <Text>
+                    Edit
+                </Text>
+            </TouchableOpacity>
         </View>
     );
 
@@ -66,14 +67,14 @@ function Home({ navigation, dispatch, dataSearch, data }) {
                     style={{ width: 300, height: 40, fontFamily: 'Inter', fontWeight: 400, fontSize: 16, lineHeight: 26 }}
                     placeholder='Search'
                     placeholderTextColor={'#171A1F'}
-                    onChangeText={text => dispatch(setSearch(text))}
                 />
             </View>
             <View style={{ marginTop: 30, height: 400 }}>
                 <FlatList
-                    data={data.todos}
+                    data={data?.todos || []}
                     renderItem={renderItem}
-                    keyExtractor={item => item.id}
+                    keyExtractor={(item, index) => index.toString()}
+
                 />
             </View>
 
@@ -100,8 +101,6 @@ const styles = StyleSheet.create({
     },
 });
 const mapStateToProps = (state) => ({
-    dataSearch: state.dataSearch,
     data: state.data,
-
 });
 export default connect(mapStateToProps)(Home);

@@ -1,8 +1,7 @@
-// store/index.js
-import { createStore } from 'redux';
-import todoReducer from './reducer'; // Điều chỉnh đường dẫn tới rootReducer của bạn nếu cần thiết
+import { createStore, applyMiddleware } from 'redux';
+import {thunk} from 'redux-thunk';
+import todoReducer from './reducer'; // Đảm bảo bạn đã import reducer của mình
 
-// Tạo store với rootReducer
-const store = createStore(todoReducer);
+const store = createStore(todoReducer, applyMiddleware(thunk));
 
 export default store;

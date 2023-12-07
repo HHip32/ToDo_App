@@ -9,7 +9,7 @@ import store from './redux/store';
 
 import Home from './Home';
 import AddJob from './AddJob';
-
+import EditJob from './EditJob';
 
 
 
@@ -27,6 +27,7 @@ export default function App() {
         <Stack.Navigator initialRouteName='Home'>
           <Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />
           <Stack.Screen name="AddJob" component={AddJob} options={{ headerShown: true, title: '' }} />
+          <Stack.Screen name="EditJob" component={EditJob} options={{ headerShown: true, title: '' }} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
